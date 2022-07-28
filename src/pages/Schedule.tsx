@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { getStartEndTimeObj } from '../utils/getTimeFormat';
 import { TimeRange } from '../interfaces/types';
+import Class from '../components/Class';
+import styled from 'styled-components';
 
 type schedule = {
   mon: Array<TimeRange>;
@@ -46,6 +48,7 @@ function Schedule() {
     sat: [],
     sun: [],
   });
+  const weekday = ['Monday', 'Tuesday', 'wednsday', 'Thursday', 'Friday', 'Saterday', 'Sunday'];
 
   useEffect(() => {
     let initialData: schedule = { mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: [] };
@@ -59,79 +62,41 @@ function Schedule() {
   }, []);
 
   return (
-    <div>
-      <div>
-        Monday
-        <ol>
-          {scheduleData.mon.map((time) => (
-            <li key={time.start}>
-              {time.start} ~ {time.end}
-            </li>
-          ))}
-        </ol>
-      </div>
-      <div>
-        Tuesday
-        <ol>
-          {scheduleData.tue.map((time) => (
-            <li key={time.start}>
-              {time.start} ~ {time.end}
-            </li>
-          ))}
-        </ol>
-      </div>
-      <div>
-        wednsday
-        <ol>
-          {scheduleData.wed.map((time) => (
-            <li key={time.start}>
-              {time.start} ~ {time.end}
-            </li>
-          ))}
-        </ol>
-      </div>
-      <div>
-        Thursday
-        <ol>
-          {scheduleData.thu.map((time) => (
-            <li key={time.start}>
-              {time.start} ~ {time.end}
-            </li>
-          ))}
-        </ol>
-      </div>
-      <div>
-        Friday
-        <ol>
-          {scheduleData.fri.map((time) => (
-            <li key={time.start}>
-              {time.start} ~ {time.end}
-            </li>
-          ))}
-        </ol>
-      </div>
-      <div>
-        Saturday
-        <ol>
-          {scheduleData.sat.map((time) => (
-            <li key={time.start}>
-              {time.start} ~ {time.end}
-            </li>
-          ))}
-        </ol>
-      </div>
-      <div>
-        Sunday
-        <ol>
-          {scheduleData.sun.map((time) => (
-            <li key={time.start}>
-              {time.start} ~ {time.end}
-            </li>
-          ))}
-        </ol>
-      </div>
-    </div>
+    <>
+      <h2>Class Schedule</h2>
+      <TimeTable>
+        {Object.keys(scheduleData).map((key: string, index: number) => (
+          <Day key={key}>
+            {weekday[index]}
+            <Ol>
+              {scheduleData[key].map((time: TimeRange) => (
+                <Class key={time.start} time={time} />
+              ))}
+            </Ol>
+          </Day>
+        ))}
+      </TimeTable>
+      <Button>Add Class Schedule</Button>
+    </>
   );
 }
 
 export default Schedule;
+
+const TimeTable = styled.div`
+  display: flex;
+`;
+
+const Day = styled.div`
+  width: 10rem;
+  margin-right: 1rem;
+`;
+
+const Ol = styled.ol`
+  margin-top: 1rem;
+`;
+
+const Button = styled.button`
+  background-color: blue;
+  color: white;
+`;

@@ -13,7 +13,8 @@ type schedule = {
 const data = {
   mon: [
     { id: 1, time: '0000-01-01 13:00' },
-    { id: 2, time: '0000-01-01 18:30' },
+    { id: 2, time: '0000-01-01 13:10' },
+    { id: 3, time: '0000-01-01 18:30' },
   ],
   tue: [],
   wed: [
@@ -95,9 +96,13 @@ function Add() {
     startOfValidRange.setMinutes(startOfValidRange.getMinutes() - 40);
     const endOfValidRange = new Date(selectedTimeString);
     endOfValidRange.setMinutes(endOfValidRange.getMinutes() + 40);
-    startTimes[day as keyof typeof startTimes]?.map((classStart) => {
-      classStart > startOfValidRange && classStart < endOfValidRange && alert('기존 수업시간을 확인하세요.');
-    });
+    for (let i = 0; i < startTimes[day as keyof typeof startTimes]?.length; i++) {
+      const classStart = startTimes[day as keyof typeof startTimes][i];
+      if (classStart > startOfValidRange && classStart < endOfValidRange) {
+        alert('기존 수업시간을 확인하세요.');
+        return;
+      }
+    }
   };
 
   useEffect(() => {

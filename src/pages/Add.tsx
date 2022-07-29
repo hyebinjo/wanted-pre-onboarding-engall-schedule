@@ -1,11 +1,66 @@
 import { useState, useEffect } from 'react';
 
+type schedule = {
+  mon: Array<Date>;
+  tue: Array<Date>;
+  wed: Array<Date>;
+  thu: Array<Date>;
+  fri: Array<Date>;
+  sat: Array<Date>;
+  sun: Array<Date>;
+};
+
+const data = {
+  mon: [
+    { id: 1, time: '0000-01-01 13:00' },
+    { id: 2, time: '0000-01-01 18:30' },
+  ],
+  tue: [],
+  wed: [
+    { id: 1, time: '0000-01-01 10:10' },
+    { id: 2, time: '0000-01-01 18:30' },
+  ],
+  thu: [
+    { id: 1, time: '0000-01-01 10:10' },
+    { id: 2, time: '0000-01-01 18:30' },
+    { id: 3, time: '0000-01-01 21:40' },
+  ],
+  fri: [
+    { id: 1, time: '0000-01-01 10:10' },
+    { id: 2, time: '0000-01-01 18:30' },
+  ],
+  sat: [],
+  sun: [{ id: 1, time: '0000-01-01 10:10' }],
+};
+
 function Add() {
+  const [jsonData] = useState(data);
+  const [startTimes, setStartTimes] = useState<schedule>({
+    mon: [],
+    tue: [],
+    wed: [],
+    thu: [],
+    fri: [],
+    sat: [],
+    sun: [],
+  });
+
   const [hour, setHour] = useState<string>('00');
   const [minute, setMinute] = useState<string>('00');
-  const [AMPM, setAMPM] = useState<string>();
-  const [day, setDay] = useState<string>();
-  const [selectedTimeString, setSelectedTimeString] = useState<string>();
+  const [AMPM, setAMPM] = useState<string>('');
+  const [day, setDay] = useState<string>('');
+  const [selectedTimeString, setSelectedTimeString] = useState<string>('');
+
+  useEffect(() => {
+    let initialData = { mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: [] };
+    for (const key in jsonData) {
+      initialData[key as keyof typeof jsonData] = jsonData[key as keyof typeof jsonData].map((lecture) => {
+        const startTimeObj = new Date(lecture.time);
+        return startTimeObj;
+      });
+    }
+    setStartTimes(initialData);
+  }, []);
 
   const setTimeString = () => {
     if (AMPM === 'am') {
@@ -34,8 +89,19 @@ function Add() {
     setTimeString();
   };
 
+  const checkPossibleTime = (day: string) => {
+    const selectedTime = new Date(selectedTimeString);
+    const startOfValidRange = new Date(selectedTimeString);
+    startOfValidRange.setMinutes(startOfValidRange.getMinutes() - 40);
+    const endOfValidRange = new Date(selectedTimeString);
+    endOfValidRange.setMinutes(endOfValidRange.getMinutes() + 40);
+    startTimes[day as keyof typeof startTimes]?.map((classStart) => {
+      classStart > startOfValidRange && classStart < endOfValidRange && alert('기존 수업시간을 확인하세요.');
+    });
+  };
+
   useEffect(() => {
-    console.log(selectedTimeString);
+    checkPossibleTime(day);
   }, [selectedTimeString]);
 
   return (

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 type schedule = {
   mon: Array<Date>;
@@ -51,6 +52,7 @@ function Add() {
   const [AMPM, setAMPM] = useState<string>('');
   const [day, setDay] = useState<string>('');
   const [selectedTimeString, setSelectedTimeString] = useState<string>('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     let initialData = { mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: [] };
@@ -84,14 +86,13 @@ function Add() {
     } else return true;
   };
 
-  const saveTime = (e: Event) => {
+  const handleSaveClick = (e: Event) => {
     e.preventDefault();
     if (!checkValidTime()) return;
     setTimeString();
   };
 
-  const checkPossibleTime = (day: string) => {
-    const selectedTime = new Date(selectedTimeString);
+  const checkPossibleTime = (day: string): boolean => {
     const startOfValidRange = new Date(selectedTimeString);
     startOfValidRange.setMinutes(startOfValidRange.getMinutes() - 40);
     const endOfValidRange = new Date(selectedTimeString);
@@ -100,13 +101,15 @@ function Add() {
       const classStart = startTimes[day as keyof typeof startTimes][i];
       if (classStart > startOfValidRange && classStart < endOfValidRange) {
         alert('기존 수업시간을 확인하세요.');
-        return;
+        setSelectedTimeString('');
+        return false;
       }
     }
+    return true;
   };
 
   useEffect(() => {
-    checkPossibleTime(day);
+    selectedTimeString && checkPossibleTime(day) && navigate('/');
   }, [selectedTimeString]);
 
   return (
@@ -170,7 +173,7 @@ function Add() {
           <input type="radio" name="weekday" value="sun" />
           <label htmlFor="sun">Sunday</label>
         </div>
-        <button onClick={(e) => saveTime(e)}>Save</button>
+        <button onClick={(e) => handleSaveClick(e)}>Save</button>
       </form>
     </>
   );

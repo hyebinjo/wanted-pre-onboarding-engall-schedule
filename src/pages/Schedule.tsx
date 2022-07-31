@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getStartEndTimeObj } from '../utils/getTimeFormat';
 import { TimeRange } from '../interfaces/types';
 import Class from '../components/Class';
@@ -76,7 +77,9 @@ function Schedule() {
           </Day>
         ))}
       </TimeTable>
-      <Button>Add Class Schedule</Button>
+      <Link to="/add">
+        <Button>Add Class Schedule</Button>
+      </Link>
     </>
   );
 }

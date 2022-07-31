@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
 
 type schedule = {
   mon: Array<Date>;
@@ -113,13 +114,13 @@ function Add() {
   }, [selectedTimeString]);
 
   return (
-    <>
-      <h2>Add class Schedule</h2>
-      <form name="time">
-        <div>
-          start time
-          <select name="hour" onChange={(e) => setHour(e.target.value)}>
-            <option value={''}>시</option>
+    <Container>
+      <H2>Add class Schedule</H2>
+      <Form name="time">
+        <Section>
+          <h3>start time</h3>
+          <TimeSelect name="hour" onChange={(e) => setHour(e.target.value)}>
+            <option value={'00'}>00</option>
             <option value={'01'}>01</option>
             <option value={'02'}>02</option>
             <option value={'03'}>03</option>
@@ -132,10 +133,9 @@ function Add() {
             <option value={'10'}>10</option>
             <option value={'11'}>11</option>
             <option value={'12'}>12</option>
-          </select>
+          </TimeSelect>
           {` : `}
-          <select name="minute" onChange={(e) => setMinute(e.target.value)}>
-            <option value="">분</option>
+          <TimeSelect name="minute" onChange={(e) => setMinute(e.target.value)}>
             <option value={'00'}>00</option>
             <option value={'05'}>05</option>
             <option value={'10'}>10</option>
@@ -148,35 +148,87 @@ function Add() {
             <option value={'45'}>45</option>
             <option value={'50'}>50</option>
             <option value={'55'}>55</option>
-          </select>
+          </TimeSelect>
           <div onChange={(e) => setAMPM(e.target.value)}>
             <input type="radio" name="time" value="am" />
             <label htmlFor="am">AM</label>
             <input type="radio" name="time" value="pm" />
             <label htmlFor="pm">PM</label>
           </div>
-        </div>
-        <div onChange={(e) => setDay(e.target.value)}>
-          Repeat on
-          <input type="radio" name="weekday" value="mon" />
+        </Section>
+        <Section onChange={(e) => setDay(e.target.value)}>
+          <h3>Repeat on</h3>
+          <input type="checkbox" name="weekday" value="mon" />
           <label htmlFor="mon">Monday</label>
-          <input type="radio" name="weekday" value="tue" />
+          <input type="checkbox" name="weekday" value="tue" />
           <label htmlFor="tue">Tuesday</label>
-          <input type="radio" name="weekday" value="wed" />
+          <input type="checkbox" name="weekday" value="wed" />
           <label htmlFor="wed">Wednesday</label>
-          <input type="radio" name="weekday" value="thu" />
+          <input type="checkbox" name="weekday" value="thu" />
           <label htmlFor="thu">Thursday</label>
-          <input type="radio" name="weekday" value="fri" />
+          <input type="checkbox" name="weekday" value="fri" />
           <label htmlFor="fri">Friday</label>
-          <input type="radio" name="weekday" value="sat" />
+          <input type="checkbox" name="weekday" value="sat" />
           <label htmlFor="sat">Saturday</label>
-          <input type="radio" name="weekday" value="sun" />
+          <input type="checkbox" name="weekday" value="sun" />
           <label htmlFor="sun">Sunday</label>
-        </div>
-        <button onClick={(e) => handleSaveClick(e)}>Save</button>
-      </form>
-    </>
+        </Section>
+      </Form>
+      <Button onClick={(e) => handleSaveClick(e)}>Save</Button>
+    </Container>
   );
 }
 
 export default Add;
+
+const Container = styled.section`
+  margin: 2.5rem;
+  position: relative;
+`;
+
+const H2 = styled.h2`
+  font-size: 1.5rem;
+  margin-bottom: 2.5rem;
+`;
+
+const Form = styled.form`
+  padding: 2rem 1.5rem;
+  margin-bottom: 1rem;
+  background-color: #ffffff;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+`;
+
+const Button = styled.button`
+  position: absolute;
+  right: 0;
+  padding: 0.6em 5em;
+  background-color: #3175d8;
+  color: #ffffff;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+`;
+
+const Section = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  height: 3rem;
+  h3 {
+    margin-right: 1rem;
+    font-weight: 400;
+  }
+`;
+
+const TimeSelect = styled.select`
+  width: 2.5rem;
+  height: 1.8rem;
+  margin: 0 0.2rem;
+  border: 1px solid #d1d1d1;
+  appearance: none;
+  text-align: center;
+  &:hover {
+    cursor: pointer;
+  }
+  &:focus {
+    outline: none;
+  }
+`;

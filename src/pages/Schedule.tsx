@@ -26,9 +26,9 @@ const data = {
     { id: 2, time: '0000-01-01 18:30' },
   ],
   thu: [
-    { id: 1, time: '0000-01-01 10:10' },
-    { id: 2, time: '0000-01-01 18:30' },
     { id: 3, time: '0000-01-01 21:40' },
+    { id: 2, time: '0000-01-01 18:30' },
+    { id: 1, time: '0000-01-01 10:10' },
   ],
   fri: [
     { id: 1, time: '0000-01-01 10:10' },
@@ -54,10 +54,10 @@ function Schedule() {
   useEffect(() => {
     let initialData: schedule = { mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: [] };
     for (const key in jsonData) {
-      initialData[key as keyof typeof jsonData] = jsonData[key as keyof typeof jsonData].map((lecture) => {
-        const startTimeObj = new Date(lecture.time);
-        return getStartEndTimeObj(startTimeObj);
-      });
+      initialData[key as keyof typeof jsonData] = jsonData[key as keyof typeof jsonData]
+        .map((lecture) => new Date(lecture.time))
+        .sort((a: Date, b: Date) => a - b)
+        .map((lecture) => getStartEndTimeObj(lecture));
     }
     setScheduleData(initialData);
   }, []);
@@ -71,11 +71,11 @@ function Schedule() {
         </Link>
       </H2>
       <TimeTable>
-        {Object.keys(scheduleData).map((key: string, index: number) => (
-          <Day key={key}>
+        {Object.keys(scheduleData).map((day: string, index: number) => (
+          <Day key={day}>
             <h3>{weekday[index]}</h3>
             <Ol>
-              {scheduleData[key].map((time: TimeRange) => (
+              {scheduleData[day as keyof typeof scheduleData].map((time: TimeRange) => (
                 <Class key={time.start} time={time} />
               ))}
             </Ol>

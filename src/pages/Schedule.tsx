@@ -7,7 +7,7 @@ import { scheduleService } from '../api/axiosInstance';
 
 function Schedule() {
   const [scheduleData, setScheduleData] = useState({});
-  const weekday = ['Monday', 'Tuesday', 'wednesday', 'Thursday', 'Friday', 'Saterday', 'Sunday'];
+  const weekday = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saterday', 'Sunday'];
 
   const formatData = async () => {
     const data = await scheduleService.get();

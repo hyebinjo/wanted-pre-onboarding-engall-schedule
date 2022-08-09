@@ -1,11 +1,15 @@
 import styled from 'styled-components';
-import { TimeRange } from '../interfaces/types';
+import { scheduleService } from '../api/axiosInstance';
 
-function Class({ time }: TimeRange) {
+function Class({ id, timeRange, formatData }) {
+  const deleteLecture = async () => {
+    await scheduleService.delete(id);
+    await formatData();
+  };
   return (
     <Li>
-      {time.start} - <br /> {time.end}
-      <CloseButton>×</CloseButton>
+      {timeRange.start} - <br /> {timeRange.end}
+      <CloseButton onClick={deleteLecture}>×</CloseButton>
     </Li>
   );
 }

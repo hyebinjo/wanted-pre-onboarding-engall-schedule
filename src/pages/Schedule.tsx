@@ -45,7 +45,7 @@ function Schedule() {
             <h3>{weekday[index]}</h3>
             <Ol>
               {scheduleData[day as keyof typeof scheduleData].map((lecture) => (
-                <Class key={lecture.id} id={lecture.id} timeRange={lecture.timeRange} />
+                <Class key={lecture.id} id={lecture.id} timeRange={lecture.timeRange} formatData={formatData} />
               ))}
             </Ol>
           </Day>

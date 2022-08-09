@@ -10,4 +10,4 @@ const axiosInstance = axios.create({
   },
 });
 
-export const hotelsService = new HttpRequest(axiosInstance);
+export const scheduleService = new HttpRequest(axiosInstance);

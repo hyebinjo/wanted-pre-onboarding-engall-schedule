@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { HttpRequest } from './httpRequest';
 
-const BASE_URL = 'http://localhost:8000/';
+const BASE_URL = 'http://localhost:8000/schedule';
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,

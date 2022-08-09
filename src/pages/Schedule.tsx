@@ -1,65 +1,34 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getStartEndTimeObj } from '../utils/getTimeFormat';
-import { TimeRange } from '../interfaces/types';
 import Class from '../components/Class';
 import styled from 'styled-components';
-
-type schedule = {
-  mon: Array<TimeRange>;
-  tue: Array<TimeRange>;
-  wed: Array<TimeRange>;
-  thu: Array<TimeRange>;
-  fri: Array<TimeRange>;
-  sat: Array<TimeRange>;
-  sun: Array<TimeRange>;
-};
-
-const data = {
-  mon: [
-    { id: 1, time: '0000-01-01 13:00' },
-    { id: 2, time: '0000-01-01 18:30' },
-  ],
-  tue: [],
-  wed: [
-    { id: 1, time: '0000-01-01 10:10' },
-    { id: 2, time: '0000-01-01 18:30' },
-  ],
-  thu: [
-    { id: 3, time: '0000-01-01 21:40' },
-    { id: 2, time: '0000-01-01 18:30' },
-    { id: 1, time: '0000-01-01 10:10' },
-  ],
-  fri: [
-    { id: 1, time: '0000-01-01 10:10' },
-    { id: 2, time: '0000-01-01 18:30' },
-  ],
-  sat: [],
-  sun: [{ id: 1, time: '0000-01-01 10:10' }],
-};
+import { scheduleService } from '../api/axiosInstance';
 
 function Schedule() {
-  const [jsonData] = useState(data);
-  const [scheduleData, setScheduleData] = useState<schedule>({
-    mon: [],
-    tue: [],
-    wed: [],
-    thu: [],
-    fri: [],
-    sat: [],
-    sun: [],
-  });
+  const [scheduleData, setScheduleData] = useState({});
   const weekday = ['Monday', 'Tuesday', 'wednesday', 'Thursday', 'Friday', 'Saterday', 'Sunday'];
 
-  useEffect(() => {
-    let initialData: schedule = { mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: [] };
-    for (const key in jsonData) {
-      initialData[key as keyof typeof jsonData] = jsonData[key as keyof typeof jsonData]
-        .map((lecture) => new Date(lecture.time))
-        .sort((a: Date, b: Date) => a - b)
-        .map((lecture) => getStartEndTimeObj(lecture));
+  const formatData = async () => {
+    const data = await scheduleService.get();
+    let initialData = { mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: [] };
+    for (const key in initialData) {
+      const dayLectures = data
+        .filter((lecture: any) => lecture.day === key)
+        .map((lecture: any) => {
+          return { ...lecture, startTime: new Date(lecture.startTime) };
+        })
+        .sort((a, b) => a.startTime - b.startTime)
+        .map((lecture: any) => {
+          return { ...lecture, timeRange: getStartEndTimeObj(lecture.startTime) };
+        });
+      initialData[key as keyof typeof initialData] = dayLectures;
     }
     setScheduleData(initialData);
+  };
+
+  useEffect(() => {
+    formatData();
   }, []);
 
   return (
@@ -75,8 +44,8 @@ function Schedule() {
           <Day key={day}>
             <h3>{weekday[index]}</h3>
             <Ol>
-              {scheduleData[day as keyof typeof scheduleData].map((time: TimeRange) => (
-                <Class key={time.start} time={time} />
+              {scheduleData[day as keyof typeof scheduleData].map((lecture) => (
+                <Class key={lecture.id} id={lecture.id} timeRange={lecture.timeRange} />
               ))}
             </Ol>
           </Day>

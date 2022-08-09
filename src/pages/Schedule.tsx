@@ -15,12 +15,9 @@ function Schedule() {
     for (const key in initialData) {
       const dayLectures = data
         .filter((lecture: any) => lecture.day === key)
+        .sort((a: string, b: string) => new Date(a.startTime) - new Date(b.startTime))
         .map((lecture: any) => {
-          return { ...lecture, startTime: new Date(lecture.startTime) };
-        })
-        .sort((a, b) => a.startTime - b.startTime)
-        .map((lecture: any) => {
-          return { ...lecture, timeRange: getStartEndTimeObj(lecture.startTime) };
+          return { ...lecture, timeRange: getStartEndTimeObj(new Date(lecture.startTime)) };
         });
       initialData[key as keyof typeof initialData] = dayLectures;
     }

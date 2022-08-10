@@ -95,29 +95,29 @@ function Add() {
             <option value={'50'}>50</option>
             <option value={'55'}>55</option>
           </TimeSelect>
-          <div onChange={(e) => setAMPM(e.target.value)}>
-            <input type="radio" name="time" value="am" />
-            <label htmlFor="am">AM</label>
-            <input type="radio" name="time" value="pm" />
-            <label htmlFor="pm">PM</label>
-          </div>
+          <RadioContainer onChange={(e) => setAMPM(e.target.value)}>
+            <RadioInput type="radio" id="am" name="time" value="am" />
+            <RadioLabel htmlFor="am">AM</RadioLabel>
+            <RadioInput type="radio" id="pm" name="time" value="pm" />
+            <RadioLabel htmlFor="pm">PM</RadioLabel>
+          </RadioContainer>
         </Section>
         <Section onChange={(e) => setDay(e.target.value)}>
           <h3>Repeat on</h3>
-          <input type="checkbox" name="weekday" value="mon" />
-          <label htmlFor="mon">Monday</label>
-          <input type="checkbox" name="weekday" value="tue" />
-          <label htmlFor="tue">Tuesday</label>
-          <input type="checkbox" name="weekday" value="wed" />
-          <label htmlFor="wed">Wednesday</label>
-          <input type="checkbox" name="weekday" value="thu" />
-          <label htmlFor="thu">Thursday</label>
-          <input type="checkbox" name="weekday" value="fri" />
-          <label htmlFor="fri">Friday</label>
-          <input type="checkbox" name="weekday" value="sat" />
-          <label htmlFor="sat">Saturday</label>
-          <input type="checkbox" name="weekday" value="sun" />
-          <label htmlFor="sun">Sunday</label>
+          <CheckboxInput type="checkbox" id="mon" name="weekday" value="mon" />
+          <CheckboxLabel htmlFor="mon">Monday</CheckboxLabel>
+          <CheckboxInput type="checkbox" id="tue" name="weekday" value="tue" />
+          <CheckboxLabel htmlFor="tue">Tuesday</CheckboxLabel>
+          <CheckboxInput type="checkbox" id="wed" name="weekday" value="wed" />
+          <CheckboxLabel htmlFor="wed">Wednesday</CheckboxLabel>
+          <CheckboxInput type="checkbox" id="thu" name="weekday" value="thu" />
+          <CheckboxLabel htmlFor="thu">Thursday</CheckboxLabel>
+          <CheckboxInput type="checkbox" id="fri" name="weekday" value="fri" />
+          <CheckboxLabel htmlFor="fri">Friday</CheckboxLabel>
+          <CheckboxInput type="checkbox" id="sat" name="weekday" value="sat" />
+          <CheckboxLabel htmlFor="sat">Saturday</CheckboxLabel>
+          <CheckboxInput type="checkbox" id="sun" name="weekday" value="sun" />
+          <CheckboxLabel htmlFor="sun">Sunday</CheckboxLabel>
         </Section>
       </Form>
       <Button onClick={(e) => handleSaveClick(e)}>Save</Button>
@@ -177,4 +177,49 @@ const TimeSelect = styled.select`
   &:focus {
     outline: none;
   }
+`;
+
+const RadioContainer = styled.div`
+  margin-left: 1rem;
+`;
+
+const RadioInput = styled.input`
+  display: none;
+  :checked + label {
+    background: gray;
+    color: #fff;
+  }
+`;
+
+const RadioLabel = styled.label`
+  display: inline-block;
+  width: 2.5rem;
+  height: 1.8rem;
+  margin: 0 0.25rem;
+  border: 1px solid #d1d1d1;
+  text-align: center;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+`;
+
+const CheckboxInput = styled.input`
+  display: none;
+  :checked + label {
+    border: 1px solid #d1d1d1;
+    color: #000000;
+  }
+`;
+
+const CheckboxLabel = styled.label`
+  display: inline-block;
+  width: 8rem;
+  height: 2rem;
+  margin: 0 0.25rem;
+  border: 1px solid #f4f4f4;
+  color: #d1d1d1;
+  text-align: center;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
 `;

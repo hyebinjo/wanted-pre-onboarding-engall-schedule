@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { scheduleService } from '../api/axiosInstance';
 import { getStartEndTimeObj } from '../utils/getTimeFormat';
-import { jsonScheduleType } from '../interfaces/types';
+import { JsonScheduleType } from '../interfaces/types';
 
 export default function useSchedule() {
-  const [jsonData, setJsonData] = useState<jsonScheduleType>([]);
+  const [jsonData, setJsonData] = useState<JsonScheduleType>([]);
   const [schedule, setSchedule] = useState({});
 
   const getJsonData = async () => {

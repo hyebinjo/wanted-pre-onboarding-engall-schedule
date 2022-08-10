@@ -1,36 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { scheduleService } from '../api/axiosInstance';
-import { getStartEndTimeObj } from '../utils/getTimeFormat';
+import useSchedule from '../hooks/useSchedule';
 
 function Add() {
-  const [scheduleData, setScheduleData] = useState({});
+  const { schedule } = useSchedule();
   const [hour, setHour] = useState<string>('00');
   const [minute, setMinute] = useState<string>('00');
   const [AMPM, setAMPM] = useState<string>('');
   const [day, setDay] = useState<string>('');
   const [selectedTimeString, setSelectedTimeString] = useState<string>('');
   const navigate = useNavigate();
-
-  const formatData = async () => {
-    const data = await scheduleService.get();
-    let initialData = { mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: [] };
-    for (const key in initialData) {
-      const dayLectures = data
-        .filter((lecture: any) => lecture.day === key)
-        .sort((a: string, b: string) => new Date(a.startTime) - new Date(b.startTime))
-        .map((lecture: any) => {
-          return { ...lecture, timeRange: getStartEndTimeObj(new Date(lecture.startTime)) };
-        });
-      initialData[key as keyof typeof initialData] = dayLectures;
-    }
-    setScheduleData(initialData);
-  };
-
-  useEffect(() => {
-    formatData();
-  }, []);
 
   const setTimeString = () => {
     if (AMPM === 'am') {
@@ -64,8 +44,8 @@ function Add() {
     startOfValidRange.setMinutes(startOfValidRange.getMinutes() - 40);
     const endOfValidRange = new Date(selectedTimeString);
     endOfValidRange.setMinutes(endOfValidRange.getMinutes() + 40);
-    for (let i = 0; i < scheduleData[day as keyof typeof scheduleData].length; i++) {
-      const classStart = new Date(scheduleData[day as keyof typeof scheduleData][i].startTime);
+    for (let i = 0; i < schedule[day as keyof typeof schedule].length; i++) {
+      const classStart = new Date(schedule[day as keyof typeof schedule][i].startTime);
       if (classStart > startOfValidRange && classStart < endOfValidRange) {
         alert('기존 수업시간을 확인하세요.');
         setSelectedTimeString('');

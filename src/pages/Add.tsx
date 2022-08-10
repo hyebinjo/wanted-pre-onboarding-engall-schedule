@@ -8,7 +8,7 @@ function Add() {
   const [hour, setHour] = useState<string>('00');
   const [minute, setMinute] = useState<string>('00');
   const [AMPM, setAMPM] = useState<string>('');
-  const [day, setDay] = useState<string>('');
+  const [days, setDays] = useState<Array<string>>([]);
   const [selectedTimeString, setSelectedTimeString] = useState<string>('');
   const navigate = useNavigate();
 
@@ -24,7 +24,7 @@ function Add() {
   };
 
   const checkValidTime = (): boolean => {
-    if (!hour || !minute || !AMPM || !day) {
+    if (!hour || !minute || !AMPM || days.length === 0) {
       alert('시간과 요일을 모두 선택하세요');
       return false;
     } else if (AMPM === 'pm' && hour === '11' && Number(minute) > 0) {
@@ -39,26 +39,32 @@ function Add() {
     setTimeString();
   };
 
-  const checkPossibleTime = (day: string): boolean => {
+  const checkPossibleTime = (days: Array<string>): boolean => {
     const startOfValidRange = new Date(selectedTimeString);
     startOfValidRange.setMinutes(startOfValidRange.getMinutes() - 40);
+
     const endOfValidRange = new Date(selectedTimeString);
     endOfValidRange.setMinutes(endOfValidRange.getMinutes() + 40);
-    for (let i = 0; i < schedule[day as keyof typeof schedule].length; i++) {
-      const classStart = new Date(schedule[day as keyof typeof schedule][i].startTime);
-      if (classStart > startOfValidRange && classStart < endOfValidRange) {
-        alert('기존 수업시간을 확인하세요.');
-        setSelectedTimeString('');
-        return false;
-      }
+
+    const isValidTime = days.every((day) => {
+      return schedule[day as keyof typeof schedule].every((lecture) => {
+        const classStart = new Date(lecture.startTime);
+        return classStart < startOfValidRange || endOfValidRange < classStart;
+      });
+    });
+
+    if (isValidTime) return true;
+    else {
+      alert('중복된 스케쥴이 있습니다.');
+      setSelectedTimeString('');
+      return false;
     }
-    return true;
   };
 
   useEffect(() => {
-    selectedTimeString && checkPossibleTime(day) && navigate('/');
+    selectedTimeString && checkPossibleTime(days) && navigate('/');
   }, [selectedTimeString]);
-
+  console.log(days);
   return (
     <Container>
       <H2>Add class Schedule</H2>
@@ -102,7 +108,14 @@ function Add() {
             <RadioLabel htmlFor="pm">PM</RadioLabel>
           </RadioContainer>
         </Section>
-        <Section onChange={(e) => setDay(e.target.value)}>
+        <Section
+          onChange={(e) => {
+            console.log(e.target.checked);
+            e.target.checked
+              ? setDays((prev) => [...prev, e.target.value])
+              : setDays((prev) => prev.filter((day) => day !== e.target.value));
+          }}
+        >
           <h3>Repeat on</h3>
           <CheckboxInput type="checkbox" id="mon" name="weekday" value="mon" />
           <CheckboxLabel htmlFor="mon">Monday</CheckboxLabel>

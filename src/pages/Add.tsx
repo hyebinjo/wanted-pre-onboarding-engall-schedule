@@ -1,53 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-
-type schedule = {
-  mon: Array<Date>;
-  tue: Array<Date>;
-  wed: Array<Date>;
-  thu: Array<Date>;
-  fri: Array<Date>;
-  sat: Array<Date>;
-  sun: Array<Date>;
-};
-
-const data = {
-  mon: [
-    { id: 1, time: '0000-01-01 13:00' },
-    { id: 2, time: '0000-01-01 13:10' },
-    { id: 3, time: '0000-01-01 18:30' },
-  ],
-  tue: [],
-  wed: [
-    { id: 1, time: '0000-01-01 10:10' },
-    { id: 2, time: '0000-01-01 18:30' },
-  ],
-  thu: [
-    { id: 1, time: '0000-01-01 10:10' },
-    { id: 2, time: '0000-01-01 18:30' },
-    { id: 3, time: '0000-01-01 21:40' },
-  ],
-  fri: [
-    { id: 1, time: '0000-01-01 10:10' },
-    { id: 2, time: '0000-01-01 18:30' },
-  ],
-  sat: [],
-  sun: [{ id: 1, time: '0000-01-01 10:10' }],
-};
+import { scheduleService } from '../api/axiosInstance';
+import { getStartEndTimeObj } from '../utils/getTimeFormat';
 
 function Add() {
-  const [jsonData] = useState(data);
-  const [startTimes, setStartTimes] = useState<schedule>({
-    mon: [],
-    tue: [],
-    wed: [],
-    thu: [],
-    fri: [],
-    sat: [],
-    sun: [],
-  });
-
+  const [scheduleData, setScheduleData] = useState({});
   const [hour, setHour] = useState<string>('00');
   const [minute, setMinute] = useState<string>('00');
   const [AMPM, setAMPM] = useState<string>('');
@@ -55,15 +13,23 @@ function Add() {
   const [selectedTimeString, setSelectedTimeString] = useState<string>('');
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const formatData = async () => {
+    const data = await scheduleService.get();
     let initialData = { mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: [] };
-    for (const key in jsonData) {
-      initialData[key as keyof typeof jsonData] = jsonData[key as keyof typeof jsonData].map((lecture) => {
-        const startTimeObj = new Date(lecture.time);
-        return startTimeObj;
-      });
+    for (const key in initialData) {
+      const dayLectures = data
+        .filter((lecture: any) => lecture.day === key)
+        .sort((a: string, b: string) => new Date(a.startTime) - new Date(b.startTime))
+        .map((lecture: any) => {
+          return { ...lecture, timeRange: getStartEndTimeObj(new Date(lecture.startTime)) };
+        });
+      initialData[key as keyof typeof initialData] = dayLectures;
     }
-    setStartTimes(initialData);
+    setScheduleData(initialData);
+  };
+
+  useEffect(() => {
+    formatData();
   }, []);
 
   const setTimeString = () => {
@@ -98,8 +64,8 @@ function Add() {
     startOfValidRange.setMinutes(startOfValidRange.getMinutes() - 40);
     const endOfValidRange = new Date(selectedTimeString);
     endOfValidRange.setMinutes(endOfValidRange.getMinutes() + 40);
-    for (let i = 0; i < startTimes[day as keyof typeof startTimes]?.length; i++) {
-      const classStart = startTimes[day as keyof typeof startTimes][i];
+    for (let i = 0; i < scheduleData[day as keyof typeof scheduleData].length; i++) {
+      const classStart = new Date(scheduleData[day as keyof typeof scheduleData][i].startTime);
       if (classStart > startOfValidRange && classStart < endOfValidRange) {
         alert('기존 수업시간을 확인하세요.');
         setSelectedTimeString('');

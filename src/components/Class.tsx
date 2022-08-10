@@ -1,10 +1,17 @@
 import styled from 'styled-components';
 import { scheduleService } from '../api/axiosInstance';
+import { TimeRange } from '../interfaces/types';
 
-function Class({ id, timeRange, formatData }) {
+type ClassProps = {
+  id: number;
+  timeRange: TimeRange;
+  remove: (id: number) => void;
+};
+
+function Class({ id, timeRange, remove }: ClassProps) {
   const deleteLecture = async () => {
     await scheduleService.delete(id);
-    await formatData();
+    remove(id);
   };
   return (
     <Li>

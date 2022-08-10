@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import useSchedule from '../hooks/useSchedule';
+import { Days } from '../interfaces/types';
 
 function Add() {
-  const { schedule } = useSchedule();
+  const { schedule, createLectures } = useSchedule();
   const [hour, setHour] = useState<string>('00');
   const [minute, setMinute] = useState<string>('00');
   const [AMPM, setAMPM] = useState<string>('');
-  const [days, setDays] = useState<Array<string>>([]);
+  const [days, setDays] = useState<Array<Days>>([]);
   const [selectedTimeString, setSelectedTimeString] = useState<string>('');
   const navigate = useNavigate();
 
@@ -62,9 +63,12 @@ function Add() {
   };
 
   useEffect(() => {
-    selectedTimeString && checkPossibleTime(days) && navigate('/');
+    if (selectedTimeString && checkPossibleTime(days)) {
+      createLectures(days, selectedTimeString);
+      navigate('/');
+    }
   }, [selectedTimeString]);
-  console.log(days);
+
   return (
     <Container>
       <H2>Add class Schedule</H2>
@@ -110,7 +114,6 @@ function Add() {
         </Section>
         <Section
           onChange={(e) => {
-            console.log(e.target.checked);
             e.target.checked
               ? setDays((prev) => [...prev, e.target.value])
               : setDays((prev) => prev.filter((day) => day !== e.target.value));

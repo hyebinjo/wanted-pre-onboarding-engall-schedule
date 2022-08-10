@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { scheduleService } from '../api/axiosInstance';
 import { getStartEndTimeObj } from '../utils/getTimeFormat';
-import { JsonScheduleType } from '../interfaces/types';
+import { JsonScheduleType, Days } from '../interfaces/types';
 
 export default function useSchedule() {
   const [jsonData, setJsonData] = useState<JsonScheduleType>([]);
@@ -32,6 +32,15 @@ export default function useSchedule() {
     setJsonData(newSchedule);
   };
 
+  const createLectures = (days: Array<Days>, timeString: string) => {
+    let lectureId = jsonData.sort((a, b) => b.id - a.id)[0].id + 1 || 1;
+    days.forEach(async (day) => {
+      const newSchedule = { id: lectureId, day: day, startTime: timeString };
+      scheduleService.post(newSchedule);
+      lectureId++;
+    });
+  };
+
   useEffect(() => {
     getJsonData();
   }, []);
@@ -40,5 +49,5 @@ export default function useSchedule() {
     formatSchedule();
   }, [jsonData]);
 
-  return { schedule, deleteLecture };
+  return { schedule, deleteLecture, createLectures };
 }

@@ -1,32 +1,11 @@
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getStartEndTimeObj } from '../utils/getTimeFormat';
 import Class from '../components/Class';
 import styled from 'styled-components';
-import { scheduleService } from '../api/axiosInstance';
+import useSchedule from '../hooks/useSchedule';
 
 function Schedule() {
-  const [scheduleData, setScheduleData] = useState({});
+  const { schedule, deleteLecture } = useSchedule();
   const weekday = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saterday', 'Sunday'];
-
-  const formatData = async () => {
-    const data = await scheduleService.get();
-    let initialData = { mon: [], tue: [], wed: [], thu: [], fri: [], sat: [], sun: [] };
-    for (const key in initialData) {
-      const dayLectures = data
-        .filter((lecture: any) => lecture.day === key)
-        .sort((a: string, b: string) => new Date(a.startTime) - new Date(b.startTime))
-        .map((lecture: any) => {
-          return { ...lecture, timeRange: getStartEndTimeObj(new Date(lecture.startTime)) };
-        });
-      initialData[key as keyof typeof initialData] = dayLectures;
-    }
-    setScheduleData(initialData);
-  };
-
-  useEffect(() => {
-    formatData();
-  }, []);
 
   return (
     <Container>
@@ -37,12 +16,12 @@ function Schedule() {
         </Link>
       </H2>
       <TimeTable>
-        {Object.keys(scheduleData).map((day: string, index: number) => (
+        {Object.keys(schedule).map((day: string, index: number) => (
           <Day key={day}>
             <h3>{weekday[index]}</h3>
             <Ol>
-              {scheduleData[day as keyof typeof scheduleData].map((lecture) => (
-                <Class key={lecture.id} id={lecture.id} timeRange={lecture.timeRange} formatData={formatData} />
+              {schedule[day as keyof typeof schedule].map((lecture) => (
+                <Class key={lecture.id} id={lecture.id} timeRange={lecture.timeRange} />
               ))}
             </Ol>
           </Day>

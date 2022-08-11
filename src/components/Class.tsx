@@ -1,23 +1,37 @@
 import styled from 'styled-components';
 import { scheduleService } from '../api/axiosInstance';
 import { TimeRange } from '../interfaces/types';
+import Modal from './Modal';
+import { useRef } from 'react';
 
 type ClassProps = {
   id: number;
   timeRange: TimeRange;
+  day: string;
   remove: (id: number) => void;
 };
 
-function Class({ id, timeRange, remove }: ClassProps) {
+function Class({ id, timeRange, day, remove }: ClassProps) {
+  const modalRef = useRef();
+
   const deleteLecture = async () => {
     await scheduleService.delete(id);
     remove(id);
   };
+
+  const modalMessage = `
+  다음 스케쥴을 삭제하시겠습니까?
+  ${day} ${timeRange.start}-${timeRange.end}
+  `;
+
   return (
-    <Li>
-      {timeRange.start} - <br /> {timeRange.end}
-      <CloseButton onClick={deleteLecture}>×</CloseButton>
-    </Li>
+    <>
+      <Li>
+        {timeRange.start} - <br /> {timeRange.end}
+        <CloseButton onClick={() => modalRef.current.showModal()}>×</CloseButton>
+      </Li>
+      <Modal message={modalMessage} onYesClick={deleteLecture} ref={modalRef} />
+    </>
   );
 }
 

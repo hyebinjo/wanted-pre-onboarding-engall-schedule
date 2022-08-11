@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import Modal from '../components/Modal';
 import useSchedule from '../hooks/useSchedule';
 import { Days } from '../interfaces/types';
+import { getStartEndTimeObj } from '../utils/getTimeFormat';
 
 function Add() {
   const { schedule, createLectures } = useSchedule();
@@ -10,18 +12,15 @@ function Add() {
   const [minute, setMinute] = useState<string>('00');
   const [AMPM, setAMPM] = useState<string>('');
   const [days, setDays] = useState<Array<Days>>([]);
-  const [selectedTimeString, setSelectedTimeString] = useState<string>('');
   const navigate = useNavigate();
+  const modalRef = useRef();
 
-  const setTimeString = () => {
+  const getTimeString = (): string => {
     if (AMPM === 'am') {
-      hour === '12'
-        ? setSelectedTimeString(`0000-01-01 00:${minute}`)
-        : setSelectedTimeString(`0000-01-01 ${hour}:${minute}`);
-    } else
-      hour === '12'
-        ? setSelectedTimeString(`0000-01-01 ${hour}:${minute}`)
-        : setSelectedTimeString(`0000-01-01 ${Number(hour) + 12}:${minute}`);
+      return hour === '12' ? `0000-01-01 00:${minute}` : `0000-01-01 ${hour}:${minute}`;
+    } else {
+      return hour === '12' ? `0000-01-01 ${hour}:${minute}` : `0000-01-01 ${Number(hour) + 12}:${minute}`;
+    }
   };
 
   const checkValidTime = (): boolean => {
@@ -34,17 +33,11 @@ function Add() {
     } else return true;
   };
 
-  const handleSaveClick = (e: Event) => {
-    e.preventDefault();
-    if (!checkValidTime()) return;
-    setTimeString();
-  };
-
-  const checkPossibleTime = (days: Array<string>): boolean => {
-    const startOfValidRange = new Date(selectedTimeString);
+  const checkPossibleSchedule = (days: Array<string>, timeString: string): boolean => {
+    const startOfValidRange = new Date(timeString);
     startOfValidRange.setMinutes(startOfValidRange.getMinutes() - 40);
 
-    const endOfValidRange = new Date(selectedTimeString);
+    const endOfValidRange = new Date(timeString);
     endOfValidRange.setMinutes(endOfValidRange.getMinutes() + 40);
 
     const isValidTime = days.every((day) => {
@@ -57,17 +50,27 @@ function Add() {
     if (isValidTime) return true;
     else {
       alert('중복된 스케쥴이 있습니다.');
-      setSelectedTimeString('');
       return false;
     }
   };
 
-  useEffect(() => {
-    if (selectedTimeString && checkPossibleTime(days)) {
-      createLectures(days, selectedTimeString);
-      navigate('/');
-    }
-  }, [selectedTimeString]);
+  const handleSaveClick = (e: Event) => {
+    e.preventDefault();
+    if (!checkValidTime()) return;
+    const timeString = getTimeString();
+    if (checkPossibleSchedule(days, timeString)) modalRef.current.showModal();
+  };
+
+  const handleModalYesClick = () => {
+    createLectures(days, getTimeString());
+    navigate('/');
+  };
+
+  const modalMessage = `
+    다음 스케쥴을 추가하시겠습니까?
+    ${days.join(', ').toUpperCase()}
+    ${getStartEndTimeObj(new Date(getTimeString())).start} - ${getStartEndTimeObj(new Date(getTimeString())).end}
+  `;
 
   return (
     <Container>
@@ -137,6 +140,7 @@ function Add() {
         </Section>
       </Form>
       <Button onClick={(e) => handleSaveClick(e)}>Save</Button>
+      <Modal message={modalMessage} onYesClick={handleModalYesClick} ref={modalRef} />
     </Container>
   );
 }

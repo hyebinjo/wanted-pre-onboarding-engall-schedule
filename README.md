@@ -23,6 +23,7 @@
 - [x] 날짜는 표시되지 않습니다.
 - [x] 각 일정은 x버튼을 누르면 삭제 되어야 합니다.
 - [x] add class schedule 버튼을 누르면 수업 일정추가 페이지로 이동합니다.
+
 ### 수업 일정 추가
 <img src="https://user-images.githubusercontent.com/90256059/184813830-9d11c077-496c-46dc-a837-68cc45b5e08b.PNG" width="60%" />
 <img src="https://user-images.githubusercontent.com/90256059/184813960-91f4fee4-7aa8-4630-a914-3adb5b8b98d9.PNG" width="60%" />
@@ -37,6 +38,13 @@
 - [x] 새로 추가된 일정이 주간 테이블에 노출됩니다.
 - [x] 페이지가 다시 로드 되어도 수업 일정이 유지 되어야 합니다.
 
+
+<img src="https://user-images.githubusercontent.com/90256059/184816854-2bc7c554-bc89-4b68-9d21-8a43b3637b00.PNG" width="60%" />
+<img src="https://user-images.githubusercontent.com/90256059/184817070-922b3614-99a0-41b9-99fe-30fba2b13daf.PNG" width="60%" />
+
+- [x] 시간 혹은 요일을 선택하지 않았을 때 save 버튼 클릭시 경고창을 띄웁니다.
+- [x] 기존 데이터와 비교하여 중복된 스케쥴이 있으면 save 버튼 클릭시 경고창을 띄웁니다.
+
 - 라우터 구조
 ```
 '/' 주간 테이블 페이지
@@ -44,4 +52,4 @@
 ```
 
 - axios API로 데이터통신 모듈 구현
-- 데이터 가공, 삭제, 생성하는 등 스케쥴 데이터를 관리하는 custom hook을 구현하여 각 페이지에서 사용
+- 데이터 가공, 삭제, 생성 등 스케쥴 데이터를 관리하는 custom hook을 구현하여 각 페이지에서 사용

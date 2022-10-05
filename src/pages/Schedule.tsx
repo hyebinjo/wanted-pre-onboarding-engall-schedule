@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
-import Class from '../components/Class';
 import styled from 'styled-components';
 import useSchedule from '../hooks/useSchedule';
+import Class from '../components/Class';
+import PageTitle from '../components/PageTitle';
+import PageMoveButton from '../components/PageMoveButton';
 
 function Schedule() {
   const { schedule, deleteLecture } = useSchedule();
@@ -9,12 +11,7 @@ function Schedule() {
 
   return (
     <Container>
-      <H2>
-        Class Schedule
-        <Link to="/add">
-          <Button>Add Class Schedule</Button>
-        </Link>
-      </H2>
+      <PageTitle title="Class Schedule" />
       <TimeTable>
         {Object.keys(schedule).map((day: string, index: number) => (
           <Day key={day}>
@@ -33,6 +30,11 @@ function Schedule() {
           </Day>
         ))}
       </TimeTable>
+      <Link to="/add">
+        <ButtonContainer>
+          <PageMoveButton buttonText="Add Class Schedule" />
+        </ButtonContainer>
+      </Link>
     </Container>
   );
 }
@@ -40,13 +42,8 @@ function Schedule() {
 export default Schedule;
 
 const Container = styled.section`
-  margin: 2.5rem;
-`;
-
-const H2 = styled.h2`
   position: relative;
-  font-size: 1.5rem;
-  margin-bottom: 2.5rem;
+  margin: 2.5rem;
 `;
 
 const TimeTable = styled.div`
@@ -71,13 +68,8 @@ const Ol = styled.ol`
   margin-top: 1rem;
 `;
 
-const Button = styled.button`
+const ButtonContainer = styled.div`
   position: absolute;
   top: 0;
   right: 0;
-  padding: 0.6em 1.2em;
-  background-color: #3175d8;
-  color: #ffffff;
-  font-size: 1rem;
-  border-radius: 0.5rem;
 `;

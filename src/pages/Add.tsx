@@ -1,10 +1,12 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import Modal from '../components/Modal';
 import useSchedule from '../hooks/useSchedule';
 import { Days } from '../interfaces/types';
 import { getStartEndTimeObj } from '../utils/getTimeFormat';
+import Modal from '../components/Modal';
+import PageTitle from '../components/PageTitle';
+import PageMoveButton from '../components/PageMoveButton';
 
 function Add() {
   const { schedule, createLectures } = useSchedule();
@@ -74,7 +76,7 @@ function Add() {
 
   return (
     <Container>
-      <H2>Add class Schedule</H2>
+      <PageTitle title="Add Class Schedule" />
       <Form name="time">
         <Section>
           <h3>start time</h3>
@@ -139,7 +141,9 @@ function Add() {
           <CheckboxLabel htmlFor="sun">Sunday</CheckboxLabel>
         </Section>
       </Form>
-      <Button onClick={(e) => handleSaveClick(e)}>Save</Button>
+      <ButtonContainer onClick={(e) => handleSaveClick(e)}>
+        <PageMoveButton buttonText="Save" />
+      </ButtonContainer>
       <Modal message={modalMessage} onYesClick={handleModalYesClick} ref={modalRef} />
     </Container>
   );
@@ -152,26 +156,11 @@ const Container = styled.section`
   position: relative;
 `;
 
-const H2 = styled.h2`
-  font-size: 1.5rem;
-  margin-bottom: 2.5rem;
-`;
-
 const Form = styled.form`
   padding: 2rem 1.5rem;
   margin-bottom: 1rem;
   background-color: #ffffff;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
-`;
-
-const Button = styled.button`
-  position: absolute;
-  right: 0;
-  padding: 0.6em 5em;
-  background-color: #3175d8;
-  color: #ffffff;
-  font-size: 1rem;
-  border-radius: 0.5rem;
 `;
 
 const Section = styled.div`
@@ -242,4 +231,9 @@ const CheckboxLabel = styled.label`
   font-weight: 500;
   font-size: 1rem;
   cursor: pointer;
+`;
+
+const ButtonContainer = styled.div`
+  position: absolute;
+  right: 0;
 `;
